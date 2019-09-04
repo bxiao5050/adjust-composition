@@ -75,11 +75,6 @@ class Composition_adjust(ttk.Frame):
         tk.Button(self, text = '>>', command = self.on_more_ele).grid(row = 0, column =1, padx = (10,10))
         tk.Button(self, text = 'next', fg = 'red', command = self.on_next).grid(row = 1, column = 0, padx = (5,5), pady = (5,5))
 
-
-    def on_more_ele(self):
-        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
-        self.elements[-1].pack(side = 'left', padx = (10,10))
-
     # new window
     def on_next(self):
         try:
@@ -129,6 +124,12 @@ class Composition_adjust(ttk.Frame):
 
         #update the summation results
         self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
+               
+    def on_more_ele(self):
+        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
+        self.elements[-1].pack(side = 'left', padx = (10,10))
+
+
 
     #release the mouse
     def on_release(self, e, slides):
