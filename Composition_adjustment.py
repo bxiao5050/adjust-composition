@@ -21,7 +21,6 @@ class Myslide(ttk.Frame):
         self.ini_per = per
         self.ini_power = power
 
-
         self.per_var = tk.DoubleVar(value=0.) # for scale and percentage
         self.power_var = tk.DoubleVar(value=0.)
 
@@ -124,13 +123,7 @@ class Composition_adjust(ttk.Frame):
 
         #update the summation results
         self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
-               
-    def on_more_ele(self):
-        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
-        self.elements[-1].pack(side = 'left', padx = (10,10))
-
-
-
+    
     #release the mouse
     def on_release(self, e, slides):
         summ = sum([s.per_var.get() for s in slides])
@@ -140,7 +133,15 @@ class Composition_adjust(ttk.Frame):
             s.ini_per = s.per_var.get()
             # s.per_spin.config(text = round(s.power_var.get(),1), width = 8)
         #update the summation results
-        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
+        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1)) 
+            
+    def on_more_ele(self):
+        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
+        self.elements[-1].pack(side = 'left', padx = (10,10))
+
+
+
+
 
 
 
