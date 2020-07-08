@@ -134,7 +134,22 @@ class Composition_adjust(ttk.Frame):
 
 
 
+    def callback_slide(self, e, slide, slides):
+        #refresh the current power
+        slide.power_var.set(slide.per_var.get()*slide.ini_power/slide.ini_per)
+        slide.ini_power = slide.power_var.get()
+        slide.ini_per = slide.per_var.get()
+        #re-calculate the per for others
+        summ = sum([s.per_var.get() for s in slides if s is not slide])
 
+        for s in slides:
+            if s is not slide:
+                s.ini_power = s.power_var.get()
+                s.ini_per = s.per_var.get()
+            s.power_spin.config(text = round(s.power_var.get(),1), width = 8)
+
+        #update the summation results
+        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
 
 
 
