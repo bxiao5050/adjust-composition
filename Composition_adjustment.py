@@ -70,23 +70,7 @@ class Composition_adjust(ttk.Frame):
         self.f_ele.grid(row = 0, column = 0)
         tk.Button(self, text = '>>', command = self.on_more_ele).grid(row = 0, column =1, padx = (10,10))
         tk.Button(self, text = 'next', fg = 'red', command = self.on_next).grid(row = 1, column = 0, padx = (5,5), pady = (5,5))
-    #override
-    def callback_slide(self, e, slide, slides):
-        #refresh the current power
-        slide.power_var.set(slide.per_var.get()*slide.ini_power/slide.ini_per)
-        slide.ini_power = slide.power_var.get()
-        slide.ini_per = slide.per_var.get()
-        #re-calculate the per for others
-        summ = sum([s.per_var.get() for s in slides if s is not slide])
 
-        for s in slides:
-            if s is not slide:
-                s.ini_power = s.power_var.get()
-                s.ini_per = s.per_var.get()
-            s.power_spin.config(text = round(s.power_var.get(),1), width = 8)
-
-        #update the summation results
-        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
     # new window
     def on_next(self):
         try:
@@ -115,25 +99,7 @@ class Composition_adjust(ttk.Frame):
         except:
             messagebox.showerror("showerror", "Give right values")
 
-
-    
-    #release the mouse
-    def on_release(self, e, slides):
-        summ = sum([s.per_var.get() for s in slides])
-        for s in slides:
-            s.per_var.set(s.per_var.get()/summ*100)
-            s.ini_power = s.power_var.get()
-            s.ini_per = s.per_var.get()
-            # s.per_spin.config(text = round(s.power_var.get(),1), width = 8)
-        #update the summation results
-        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1)) 
-            
-    def on_more_ele(self):
-        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
-        self.elements[-1].pack(side = 'left', padx = (10,10))
-
-
-
+    #override
     def callback_slide(self, e, slide, slides):
         #refresh the current power
         slide.power_var.set(slide.per_var.get()*slide.ini_power/slide.ini_per)
@@ -150,11 +116,21 @@ class Composition_adjust(ttk.Frame):
 
         #update the summation results
         self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
-
-
-
-
-
+    
+    #release the mouse
+    def on_release(self, e, slides):
+        summ = sum([s.per_var.get() for s in slides])
+        for s in slides:
+            s.per_var.set(s.per_var.get()/summ*100)
+            s.ini_power = s.power_var.get()
+            s.ini_per = s.per_var.get()
+            # s.per_spin.config(text = round(s.power_var.get(),1), width = 8)
+        #update the summation results
+        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1)) 
+            
+    def on_more_ele(self):
+        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
+        self.elements[-1].pack(side = 'left', padx = (10,10))
 
 
 class One_ele(tk.LabelFrame):
