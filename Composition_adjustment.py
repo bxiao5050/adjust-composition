@@ -21,6 +21,7 @@ class Myslide(ttk.Frame):
         self.ini_per = per
         self.ini_power = power
 
+
         self.per_var = tk.DoubleVar(value=0.) # for scale and percentage
         self.power_var = tk.DoubleVar(value=0.)
 
@@ -34,7 +35,7 @@ class Myslide(ttk.Frame):
 
         #power
         f_power = ttk.LabelFrame(self, text = 'power')
-
+        # self.power_spin = tk.Spinbox(f_power, textvariable = self.power_var, wrap=True, width=6, command = self.callback_powerspin, increment  = 1, from_=1, to=600,state = 'disable')
         self.power_spin = tk.Label(f_power, text = round(self.power_var.get(),1), width = 8)
         self.power_spin.pack()
 
@@ -48,6 +49,9 @@ class Myslide(ttk.Frame):
         f_power.grid(row = 2, column = 0, sticky = 'news')
         f_perl.grid(row = 3, column = 0, sticky = 'news')
 
+
+    # def callback_powerspin(self):
+    #     self.per_var.set(round(self.power_var.get()*self.ini_per/self.ini_power, 1))
 
     def callback_slide(self, e=''):
         self.power_var.set(self.per_var.get()*self.ini_power/self.ini_per)
@@ -70,6 +74,11 @@ class Composition_adjust(ttk.Frame):
         self.f_ele.grid(row = 0, column = 0)
         tk.Button(self, text = '>>', command = self.on_more_ele).grid(row = 0, column =1, padx = (10,10))
         tk.Button(self, text = 'next', fg = 'red', command = self.on_next).grid(row = 1, column = 0, padx = (5,5), pady = (5,5))
+
+
+    def on_more_ele(self):
+        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
+        self.elements[-1].pack(side = 'left', padx = (10,10))
 
     # new window
     def on_next(self):
@@ -110,13 +119,17 @@ class Composition_adjust(ttk.Frame):
 
         for s in slides:
             if s is not slide:
+                # print(slide.per_var.get())
+                # print(f'{s.per_var.get()}'+'\n')
+                # s.per_var.set((100-slide.per_var.get())*s.per_var.get()/summ)
+                # s.power_var.set(round(s.per_var.get()*s.ini_power/s.ini_per, 1))
                 s.ini_power = s.power_var.get()
                 s.ini_per = s.per_var.get()
             s.power_spin.config(text = round(s.power_var.get(),1), width = 8)
 
         #update the summation results
         self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
-    
+
     #release the mouse
     def on_release(self, e, slides):
         summ = sum([s.per_var.get() for s in slides])
@@ -126,11 +139,12 @@ class Composition_adjust(ttk.Frame):
             s.ini_per = s.per_var.get()
             # s.per_spin.config(text = round(s.power_var.get(),1), width = 8)
         #update the summation results
-        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1)) 
-            
-    def on_more_ele(self):
-        self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
-        self.elements[-1].pack(side = 'left', padx = (10,10))
+        self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
+
+
+
+
+
 
 
 class One_ele(tk.LabelFrame):
