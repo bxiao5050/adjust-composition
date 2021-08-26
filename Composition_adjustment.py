@@ -74,7 +74,21 @@ class Composition_adjust(ttk.Frame):
         self.f_ele.grid(row = 0, column = 0)
         tk.Button(self, text = '>>', command = self.on_more_ele).grid(row = 0, column =1, padx = (10,10))
         tk.Button(self, text = 'next', fg = 'red', command = self.on_next).grid(row = 1, column = 0, padx = (5,5), pady = (5,5))
+        #power
+        f_power = ttk.LabelFrame(self, text = 'power')
+        # self.power_spin = tk.Spinbox(f_power, textvariable = self.power_var, wrap=True, width=6, command = self.callback_powerspin, increment  = 1, from_=1, to=600,state = 'disable')
+        self.power_spin = tk.Label(f_power, text = round(self.power_var.get(),1), width = 8)
+        self.power_spin.pack()
 
+        #percentage
+        f_perl = ttk.LabelFrame(self, text = 'per')
+        self.per_spin = tk.Spinbox(f_perl, textvariable = self.per_var, wrap=True, width=6, command = self.callback_slide, increment  = 0.1, from_=0.1, to=90,state='readonly', fg = 'red')
+        self.per_spin.pack()
+
+        # ttk.Entry(self, width = 3).grid(row = 0, column = 0, sticky = 'news')
+        f_slide.grid(row = 1, column = 0, sticky = 'news')
+        f_power.grid(row = 2, column = 0, sticky = 'news')
+        f_perl.grid(row = 3, column = 0, sticky = 'news')
 
     def on_more_ele(self):
         self.elements.append(One_ele(self.f_ele, text = f'Nr. {len(self.elements)+1}', fg = 'blue'))
@@ -142,7 +156,31 @@ class Composition_adjust(ttk.Frame):
         self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
 
 
+        try:
+            w = tk.Toplevel(self)
+            w.title(f'Composition and power')
+            ele_f = tk.Frame(w) # frame for scales
+            inf_f = tk.LabelFrame(w, text = 'summation of all percentages:') # for information panel
+            ele_f.pack()
+            inf_f.pack()
+            slides = []
+            for ele in self.elements:
+                ele_name = ele.ele_name.get()
+                per = float(ele.ele_per.get())
+                power = float(ele.ele_power.get())
+                slides.append(Myslide(ele_f, ele_name, per, power))
+                slides[-1].pack(side = 'left', padx = (10,10), pady = (10, 10))
 
+            self.per_total = tk.Label(inf_f, fg = 'blue', text = sum([slide.per_var.get() for slide in slides]))
+            self.per_total.pack()
+
+            for slide in slides:
+                slide.per_spin.config(command = lambda e='', slide=slide, slides=slides:self.callback_slide(e, slide, slides))
+                slide.slide.config(command = lambda e='', slide=slide, slides=slides:self.callback_slide(e, slide, slides))
+                slide.slide.bind("<ButtonRelease-1>", lambda e = '',slides = slides: self.on_release(e, slides))
+                slide.per_spin.bind("<ButtonRelease-1>", lambda e = '',slides = slides: self.on_release(e, slides))
+        except:
+            messagebox.showerror("showerror", "Give right values")
 
 
 
