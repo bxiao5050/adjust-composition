@@ -53,7 +53,12 @@ class Myslide(ttk.Frame):
     # def callback_powerspin(self):
     #     self.per_var.set(round(self.power_var.get()*self.ini_per/self.ini_power, 1))
 
+    def callback_slide(self, e=''):
+        self.power_var.set(self.per_var.get()*self.ini_power/self.ini_per)
+        self.power_spin.config(text = round(self.power_var.get(),1), width = 8)
 
+    def set_value(self, value):
+        self.input_var.set(value)
 
 
 class Composition_adjust(ttk.Frame):
@@ -76,6 +81,33 @@ class Composition_adjust(ttk.Frame):
         self.elements[-1].pack(side = 'left', padx = (10,10))
 
     # new window
+    def on_next(self):
+        try:
+            w = tk.Toplevel(self)
+            w.title(f'Composition and power')
+            ele_f = tk.Frame(w) # frame for scales
+            inf_f = tk.LabelFrame(w, text = 'summation of all percentages:') # for information panel
+            ele_f.pack()
+            inf_f.pack()
+            slides = []
+            for ele in self.elements:
+                ele_name = ele.ele_name.get()
+                per = float(ele.ele_per.get())
+                power = float(ele.ele_power.get())
+                slides.append(Myslide(ele_f, ele_name, per, power))
+                slides[-1].pack(side = 'left', padx = (10,10), pady = (10, 10))
+
+            self.per_total = tk.Label(inf_f, fg = 'blue', text = sum([slide.per_var.get() for slide in slides]))
+            self.per_total.pack()
+
+            for slide in slides:
+                slide.per_spin.config(command = lambda e='', slide=slide, slides=slides:self.callback_slide(e, slide, slides))
+                slide.slide.config(command = lambda e='', slide=slide, slides=slides:self.callback_slide(e, slide, slides))
+                slide.slide.bind("<ButtonRelease-1>", lambda e = '',slides = slides: self.on_release(e, slides))
+                slide.per_spin.bind("<ButtonRelease-1>", lambda e = '',slides = slides: self.on_release(e, slides))
+        except:
+            messagebox.showerror("showerror", "Give right values")
+
     #override
     def callback_slide(self, e, slide, slides):
         #refresh the current power
@@ -108,33 +140,7 @@ class Composition_adjust(ttk.Frame):
             # s.per_spin.config(text = round(s.power_var.get(),1), width = 8)
         #update the summation results
         self.per_total.config(text = round(sum([s.per_var.get() for s in slides]),1))
-        
-    def on_next(self):
-        try:
-            w = tk.Toplevel(self)
-            w.title(f'Composition and power')
-            ele_f = tk.Frame(w) # frame for scales
-            inf_f = tk.LabelFrame(w, text = 'summation of all percentages:') # for information panel
-            ele_f.pack()
-            inf_f.pack()
-            slides = []
-            for ele in self.elements:
-                ele_name = ele.ele_name.get()
-                per = float(ele.ele_per.get())
-                power = float(ele.ele_power.get())
-                slides.append(Myslide(ele_f, ele_name, per, power))
-                slides[-1].pack(side = 'left', padx = (10,10), pady = (10, 10))
 
-            self.per_total = tk.Label(inf_f, fg = 'blue', text = sum([slide.per_var.get() for slide in slides]))
-            self.per_total.pack()
-
-            for slide in slides:
-                slide.per_spin.config(command = lambda e='', slide=slide, slides=slides:self.callback_slide(e, slide, slides))
-                slide.slide.config(command = lambda e='', slide=slide, slides=slides:self.callback_slide(e, slide, slides))
-                slide.slide.bind("<ButtonRelease-1>", lambda e = '',slides = slides: self.on_release(e, slides))
-                slide.per_spin.bind("<ButtonRelease-1>", lambda e = '',slides = slides: self.on_release(e, slides))
-        except:
-            messagebox.showerror("showerror", "Give right values")
 
 
 
